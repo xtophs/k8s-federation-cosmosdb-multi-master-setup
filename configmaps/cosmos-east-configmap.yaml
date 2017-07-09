@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cosmos-config
+  namespace: default
+data:
+  primary-endpoint: https://cosmos-east.documents.azure.com:443/
+  primary-key: JnHqKt8U9KQXihO0MIRId5AVsYM92MTmUpUvhF587P6Fhr4eY5H99QS6hsLNlpZPs0nFcbUPvRr7VNotaYTMfQ==
+  secondary-endpoint: https://cosmos-west.documents.azure.com:443/
+  secondary-key: GOXvDjqvIQ8cDwJqAKDJCzRosM6MJVnC2MMd4HA7Z9u50fiOgfMMIMC5guF5frOeuIUgTrRr7vyoAbHsCVMfFA==
+  write-regions: eastus:westus
+  read-regions: eastus:westus
+  

@@ -1,0 +1,62 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: cosmos-test-rs
+  annotations:
+    federation.kubernetes.io/replica-set-preferences: |
+      {
+          "rebalance": true,
+          "clusters": {
+              "fed-west": {
+                  "minReplicas": 1,
+                  "maxReplicas": 4,
+                  "weight": 1
+              },
+              "fed-east": {
+                  "minReplicas": 1,
+                  "maxReplicas": 4,
+                  "weight": 1
+              }
+          }
+      }
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels: 
+        app: cosmosdata
+    spec:  
+      containers:
+        - name: cosmost-test-container
+          image: xtoph/cosmosdb-multi-master:1.2
+          env:
+            - name: PRIMARY_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: cosmos-config
+                  key: primary-endpoint
+            - name: PRIMARY_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: cosmos-config
+                  key: primary-key
+            - name: SECONDARY_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: cosmos-config
+                  key: secodary-endpoint
+            - name: SECONDARY_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: cosmos-config
+                  key: secondary-key
+            - name: WRITE_REGIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: cosmos-config
+                  key: write-regions
+            - name: READ_REGIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: cosmos-config
+                  key: read-regions
