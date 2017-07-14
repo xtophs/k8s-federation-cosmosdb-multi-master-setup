@@ -44,7 +44,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: cosmos-config
-                  key: secodary-endpoint
+                  key: secondary-endpoint
             - name: SECONDARY_KEY
               valueFrom:
                 configMapKeyRef:
