@@ -1,5 +1,19 @@
 # Demo: HA with k8s federation and CosmosDb
 
+This Demo configures an multi-region HA setup with [kubernetes federation](https://kubernetes.io/docs/concepts/cluster-administration/federation/) with [Azure DNS](https://azure.microsoft.com/en-us/services/dns/) and a [multi-master, multi-region CosmosDb](https://docs.microsoft.com/en-us/azure/cosmos-db/multi-region-writers).
+
+The architecture deploys microservices to access data in CosmosDb into 2 federated kubernetes clusters:
+![](images/multi-master-cosmos.png)
+
+The SLA of
+
+* 2 geo-distributed k8s compute clusters with an availability SLA of 99.95% each, 
+* a geo-distributed CosmosDb with an availability SLA of 99.99% and 
+* Azure DNS, also with 99.99% 
+
+combined into a single solution reaches **99.99%** following [@hanuk's calculations](http://download.microsoft.com/download/1/C/2/1C23BE8E-D0D8-448C-BF38-A0708C9EF9F5/Building_Mission_Critical_Systems_on_Cloud_Platforms.pdf). 
+
+
 ## Setup Federation  
 Follow the steps [here](https://github.com/xtophs/k8s-setup-federation-cluster)
 
@@ -52,19 +66,25 @@ kubectl create -f svc/items-svc.yaml --context=myfederation
 
 2. Query the east database from the Azure Portal. Confirm it's empty
 
-3. Show the DNS zone for federated service 
+3. Show the DNS zone for federated service and copy the DNS Name for the federation A Record.
 
-4. List items using the service - Confirm it's empty
+4. Confirm the service returns an empty response - with cosmosdata-svc.default.myfederation.svc.xtophs.com as federation DNS name.  
 ```
-$ curl http://localhost:5000/api/items
+$ curl http://cosmosdata-svc.default.myfederation.svc.eastus.xtophs.com:5000/api/items
 []
 ```
 
-5. Write to to the database through each endpoint
+5. Write to to the database through each endpoint.
+
+
+Results from the east partition (note the location: cosmos-east-eastus.documents.azure.com )
 ```
-$ curl -X POST -H "Content-Type: application/json" -d '{"text":"bladeebla" }' http://:5000/api/items
-$ curl -X POST -H "Content-Type: application/json" -d '{"text":"bladeebla" }' http://:5000/api/items
-$ curl -X POST -H "Content-Type: application/json" -d '{"text":"bladeebla" }' http://:5000/api/items
+$ curl -X POST -H "Content-Type: application/json" -d '{"text":"bladeebla" }' http://cosmosdata-svc.default.myfederation.svc.eastus.xtophs.com:5000/api/items
+```
+
+Results from the west partition (note the location: cosmos-west-westus.documents.azure.com):
+```
+$ curl -X POST -H "Content-Type: application/json" -d '{"text":"bladeebla" }' http://cosmosdata-svc.default.myfederation.svc.westus.xtophs.com:5000/api/items
 ```
 
 6. List items using the service - see items from both collections
@@ -72,5 +92,11 @@ $ curl -X POST -H "Content-Type: application/json" -d '{"text":"bladeebla" }' ht
 $ curl http://localhost:5000/api/items
 []
 ```
+
+Aggregated results with both locations:
+```
+$  curl -X POST -H "Content-Type: application/json" -d '{"text":"bladeebla" }' http://cosmosdata-svc.default.myfederation.svc.westus.xtophs.com:5000/api/items
+```
+
 
 7. (optional). Query data from each database using the Azure Portal

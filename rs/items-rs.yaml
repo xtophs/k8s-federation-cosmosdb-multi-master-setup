@@ -50,12 +50,12 @@ spec:
                 configMapKeyRef:
                   name: cosmos-config
                   key: secondary-key
-            - name: WRITE_REGIONS
+            - name: PRIMARY_LOCATIONS
               valueFrom:
                 configMapKeyRef:
                   name: cosmos-config
                   key: write-regions
-            - name: READ_REGIONS
+            - name: SECONDARY_LOCATIONS
               valueFrom:
                 configMapKeyRef:
                   name: cosmos-config

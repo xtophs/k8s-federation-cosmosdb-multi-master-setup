@@ -8,6 +8,6 @@ data:
   primary-key: GOXvDjqvIQ8cDwJqAKDJCzRosM6MJVnC2MMd4HA7Z9u50fiOgfMMIMC5guF5frOeuIUgTrRr7vyoAbHsCVMfFA==
   secondary-endpoint: https://cosmos-east.documents.azure.com:443/
   secondary-key: JnHqKt8U9KQXihO0MIRId5AVsYM92MTmUpUvhF587P6Fhr4eY5H99QS6hsLNlpZPs0nFcbUPvRr7VNotaYTMfQ==
-  write-regions: westus:eastus
-  read-regions: westus:eastus
+  primary-locations: westus:eastus
+  secondary-locations: westus:eastus
   
